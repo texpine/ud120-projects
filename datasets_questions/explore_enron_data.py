@@ -17,14 +17,96 @@
 
 import pickle
 import sys
+import numpy as np
+from sklearn.naive_bayes import GaussianNB
 
 
 # test fucking github
 
+enron_data = {}
+
 def main(argv=None):
     # print(argv)
+    global enron_data
     enron_data = pickle.load(open("../final_project/final_project_dataset.pkl", "r"))
+    # print(enron_data)
+    #
+    # exercise_poi()
+    # exercise_persons_stats(['PRENTICE JAMES','COLWELL WESLEY','SKILLING JEFFREY K'])
+    # exercise_persons_compare(['SKILLING JEFFREY K', 'LAY KENNETH L', 'FASTOW ANDREW S'])
+    # exercise_all_persons()
 
+    bayes_test()
+
+
+def bayes_test():
+    X = np.array([[-1, -1], [-2, -1], [-3, -2], [1, 1], [2, 1], [3, 2]])
+    Y = np.array([1, 1, 1, 2, 2, 2])
+    clf = GaussianNB()
+    clf.fit(X, Y)
+    print(clf.predict([[-0.8, -1]]))
+    clf_pf = GaussianNB()
+    clf_pf.partial_fit(X, Y, np.unique(Y))
+    print(clf_pf.predict([[-0.8, -1]]))
+
+def exercise_all_persons():
+    persons_with_salary = 0
+    persons_with_email = 0
+    persons_without_payments = 0
+    pois_without_payments = 0
+    pois = 0
+    for p in enron_data:
+        if ('salary' in enron_data[p].keys()) and (enron_data[p]['salary'] != 'NaN'):
+            persons_with_salary += 1
+
+        if ('email_address' in enron_data[p].keys()) and (enron_data[p]['email_address'] != 'NaN'):
+            persons_with_email += 1
+
+        poi = False
+        if ('poi' in enron_data[p].keys()) and (enron_data[p]['poi'] == True):
+            pois += 1
+            poi = True
+
+        if ('total_payments' not in enron_data[p].keys()) or (enron_data[p]['total_payments'] == 'NaN'):
+            persons_without_payments += 1
+            if poi:
+                pois_without_payments += 1
+
+
+    print("Persons with Salary available: " + str(persons_with_salary))
+    print("Persons with E-mail available: " + str(persons_with_email))
+    print("Persons without payments: " + str(persons_without_payments))
+    print("Persons % without payments: " + str(float(persons_without_payments)/len(enron_data.keys())))
+
+    print("POIs without payments: " + str(pois_without_payments))
+    print("POIs % without payments: " + str(float(pois_without_payments)/pois))
+
+    print("Persons +10: " + str(len(enron_data.keys())+10))
+    print("Persons +10 without payments: " + str(persons_without_payments+10))
+
+    print("POIs +10: " + str(pois + 10))
+    print("POIs +10 without payments: " + str(pois_without_payments + 10))
+
+
+
+def exercise_persons_compare(person_names_=[]):
+    top_payments = ["Someone",0]
+    for p in person_names_:
+        print(enron_data[p]['total_payments'])
+        if enron_data[p]['total_payments'] > top_payments[1]:
+            top_payments = [p, enron_data[p]['total_payments']]
+
+    print("Person who got more payments: " + str(top_payments[0]) + " received " + str(top_payments[1]))
+
+
+def exercise_persons_stats(person_name_=[]):
+    for p in person_name_:
+        print("Total stock belonging to " + p + ": " + str(enron_data[p]['total_stock_value']))
+        print(" Messages from " + p + " to POIs: " + str(enron_data[p]['from_this_person_to_poi']))
+        print("Exercised stock belonging to " + p + ": " + str(enron_data[p]['exercised_stock_options']))
+
+
+def exercise_poi():
     poi_from_pickle = 0
     names_from_pickle = []
 
