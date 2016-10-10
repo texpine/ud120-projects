@@ -29,12 +29,14 @@ def main(argv=None):
     # print(argv)
     global enron_data
     enron_data = pickle.load(open("../final_project/final_project_dataset.pkl", "r"))
-    # print(enron_data)
+    print(enron_data)
     #
     # exercise_poi()
-    # exercise_persons_stats(['PRENTICE JAMES','COLWELL WESLEY','SKILLING JEFFREY K'])
-    # exercise_persons_compare(['SKILLING JEFFREY K', 'LAY KENNETH L', 'FASTOW ANDREW S'])
-    # exercise_all_persons()
+
+
+    exercise_all_persons()
+    exercise_persons_stats(['PRENTICE JAMES', 'COLWELL WESLEY', 'SKILLING JEFFREY K'])
+    exercise_persons_compare(['SKILLING JEFFREY K', 'LAY KENNETH L', 'FASTOW ANDREW S'])
 
     bayes_test()
 
@@ -48,6 +50,7 @@ def bayes_test():
     clf_pf = GaussianNB()
     clf_pf.partial_fit(X, Y, np.unique(Y))
     print(clf_pf.predict([[-0.8, -1]]))
+
 
 def exercise_all_persons():
     persons_with_salary = 0
@@ -72,6 +75,13 @@ def exercise_all_persons():
             if poi:
                 pois_without_payments += 1
 
+    print("Features for Persons: " + str(len(enron_data['METTS MARK'].keys())))
+    print("Persons: " + str(len(enron_data.keys())))
+    print("Persons without payments: " + str(persons_without_payments))
+
+    print("POIs at Data: " + str(pois))
+    print("POIs at List: " + str(len(poi_names())))
+    print("POIs without payments: " + str(pois_without_payments))
 
     print("Persons with Salary available: " + str(persons_with_salary))
     print("Persons with E-mail available: " + str(persons_with_email))
