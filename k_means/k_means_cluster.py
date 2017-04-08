@@ -1,11 +1,3 @@
-#!/usr/bin/python 
-
-""" 
-    Skeleton code for k-means clustering mini-project.
-"""
-
-
-
 
 import pickle
 import numpy
@@ -13,11 +5,10 @@ import matplotlib.pyplot as plt
 import sys
 sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
+from sklearn.cluster import KMeans
 
 
-
-
-def Draw(pred, features, poi, mark_poi=False, name="image.png", f1_name="feature 1", f2_name="feature 2"):
+def Draw(pred, features, poi, mark_poi=False, name="image.png", f1_name="feature 1", f2_name="feature 2", f3_name="feature 3"):
     """ some plotting code designed to help you visualize your clusters """
 
     ### plot each cluster with a different color--add more colors for
@@ -48,11 +39,29 @@ data_dict.pop("TOTAL", 0)
 ### can be any key in the person-level dictionary (salary, director_fees, etc.) 
 feature_1 = "salary"
 feature_2 = "exercised_stock_options"
+feature_3 = "total_payments"
 poi  = "poi"
 features_list = [poi, feature_1, feature_2]
 data = featureFormat(data_dict, features_list )
 poi, finance_features = targetFeatureSplit( data )
 
+
+a_stock_options = []
+a_salary = []
+for key, value in data_dict.items():
+    if ('exercised_stock_options' in value.keys()) and (value['exercised_stock_options'] != 'NaN'):
+        a_stock_options.append(int(value['exercised_stock_options']))
+
+    if ('salary' in value.keys()) and (value['salary'] != 'NaN'):
+        a_salary.append(int(value['salary']))
+        
+print(a_stock_options)
+print(min(a_stock_options))
+print(max(a_stock_options))
+
+print(a_salary)
+print(min(a_salary))
+print(max(a_salary))
 
 ### in the "clustering with 3 features" part of the mini-project,
 ### you'll want to change this line to 
@@ -64,7 +73,8 @@ plt.show()
 
 ### cluster here; create predictions of the cluster labels
 ### for the data and store them to a list called pred
-
+kmeans = KMeans(n_clusters=2, random_state=0).fit(data)
+pred = kmeans.labels_
 
 
 
@@ -74,3 +84,5 @@ try:
     Draw(pred, finance_features, poi, mark_poi=False, name="clusters.pdf", f1_name=feature_1, f2_name=feature_2)
 except NameError:
     print "no predictions object named pred found, no clusters to plot"
+
+print "FUCK"
